@@ -19,11 +19,11 @@ The word files must follow the UD format
 
 ## Train
 
-Go to train.py from arg\_list select the model\_path and the LANG (language, currently 'en' for English  UD 1.2 or 'vi' for Vietnamese UD 2.0)
+Go to train.py from arg\_list select the model\_path and the LANG (language, currently 'en1.2' for English  UD 1.2 or 'vi' for Vietnamese UD 2.0)
 
 To train the model with the default parameters now run `python3 train.py`
 
-Currently train on CPU, GPU might cause a slow start problem due to CUDA version and PyTorch version missmatch bug (looking into it, runned ok on cis lambda)
+Currently train on CPU, GPU might cause a slow start problem due to CUDA version and PyTorch version missmatch new bug (works ok on lambda lmu)
 
 Default training on Vietnamese which is a smaller dataset (training takes 1 day vs 3 days on english)
 
