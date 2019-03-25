@@ -4,6 +4,7 @@ import os
 import random
 import re
 
+
 random.seed(0)
 seed = 0
 torch.manual_seed(seed)
@@ -51,13 +52,11 @@ def load_word_dataset(f_name):
     return all_sent_x, all_sent_y, x_word, y_word  
 
 
-
 def remove_file(f_name):
     try:
         os.remove(f_name)
     except OSError:
         pass
-    
     
 
 def save_char_file(all_sent_x, all_sent_y, f_name, ):
@@ -78,6 +77,7 @@ def save_char_file(all_sent_x, all_sent_y, f_name, ):
                         f.write(char + '\t' + to_write_label +'\t' + '0' + '\n')
             f.write('\n')
 
+
 def create_char_dataset(dir_name,f_name_char_train, f_name_char_val, f_name_char_test):
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
@@ -94,6 +94,7 @@ def create_char_dataset(dir_name,f_name_char_train, f_name_char_val, f_name_char
     save_char_file(all_sent_x_train,all_sent_y_train, f_name_char_train)
     save_char_file(all_sent_x_val,all_sent_y_val, f_name_char_val)
     save_char_file(all_sent_x_test,all_sent_y_test, f_name_char_test)
+
 
 def load_char_dataset(f_name):
     
@@ -150,7 +151,6 @@ def chunks(l, n):
 def batchify_x(data, batch_size, batch_len_list, char_enc_size):
     """Takes a list of data_num x len x input_dim
         returns a list of batch_size x max_len_of_batch x input dim  tensors """
-        
     batched_data = []
     
     for i, batch_no_pad in enumerate(chunks(data, batch_size)):
@@ -192,9 +192,9 @@ def batchify_y(data, batch_size, batch_len_list, char_enc_size):
                                 
     return batched_data
 
+
 def batch_len_list(len_list, batch_size):
     """ Creates a list of the length of each minibatch"""
-    
     if (len(len_list) % batch_size != 0):
         batch_num = len(len_list) // batch_size + 1
     else:
@@ -206,24 +206,6 @@ def batch_len_list(len_list, batch_size):
         batched_len_list.append( next(gen)  )
     return batched_len_list
 
-
-
-# =============================================================================
-# def max_pad_sentences(all_sent_x_one_hot, all_sent_y, all_seg_flags, max_sent_len, char_enc_size):
-#     """ Pad the length of each example to the maximum so we equal sized chunks
-#         for easier processing"""    
-#         
-#     for i, t in enumerate (all_sent_x_one_hot):
-#        all_sent_x_one_hot[i] =  np.vstack( (t, np.zeros((max_sent_len - len(t), char_enc_size), dtype=np.float32)  ))
-#        
-#     for t in all_sent_y:
-#         t.extend([np.uint8(-1)] * (max_sent_len - len(t)))        
-#     
-#     for t in all_seg_flags:
-#         t.extend([np.uint8(-1)] * (max_sent_len - len(t))) 
-# =============================================================================
-        
-    return 
 
 def load_dataset_char_corrupt(f_name):
     with open(f_name, 'r') as f:
@@ -245,6 +227,7 @@ def load_dataset_char_corrupt(f_name):
             sent_y.append(label)
             
     return all_x, all_labels
+
 
 def one_hot_encoding(all_sent_x, all_sent_y, char_to_ind, label_to_ind, char_enc_size, HAS_SPACES):
     """
@@ -315,6 +298,7 @@ def one_hot_encoding(all_sent_x, all_sent_y, char_to_ind, label_to_ind, char_enc
     
     return all_sent_x_one_hot, all_sent_y_int
 
+
 def seg_mask_fix(seg_inds, max_path):
     counter = np.zeros((len(seg_inds)), dtype=np.int32)
     seg_inds_fix = []
@@ -333,11 +317,11 @@ def seg_mask_fix(seg_inds, max_path):
         
     return seg_inds_fix
 
+
 def encode_and_batch(all_sent_x, all_sent_y, all_seg_ind, char_to_ind, label_to_ind, batch_size, char_enc_size, max_path, HAS_SPACES=True, train=False):
     
     all_sent_x_one_hot , all_sent_y_int =  one_hot_encoding(all_sent_x, all_sent_y ,char_to_ind,
                                                             label_to_ind, char_enc_size, HAS_SPACES )
-    
     
     if train:
         print ('Load training data')
@@ -351,9 +335,7 @@ def encode_and_batch(all_sent_x, all_sent_y, all_seg_ind, char_to_ind, label_to_
         all_sent_y_int = [all_sent_y_int[i] for i in inds]
         all_seg_ind = [all_seg_ind[i] for i in inds]
         
-
     
-
     len_list= [np.shape(sent)[0] for sent in all_sent_x_one_hot]
     batched_len = batch_len_list(len_list, batch_size)    
     
@@ -363,17 +345,13 @@ def encode_and_batch(all_sent_x, all_sent_y, all_seg_ind, char_to_ind, label_to_
     
     return x_data, y_data, seg_ind, batched_len
 
+
 if __name__ == "__main__":
-# =============================================================================
-#     f_name_char_train = 'data/char/en-ud-train1.2.conllu'
-#     f_name_char_val = 'data/char/en-ud-dev1.2.conllu'
-#     f_name_char_test = 'data/char/en-ud-test1.2.conllu'
-# =============================================================================
     f_name_word_train = 'data/words/en1.2/en-ud-train1.2.conllu'
     f_name_word_val = 'data/words/en1.2/en-ud-dev1.2.conllu'
     f_name_word_test =  'data/words/en1.2/en-ud-test1.2.conllu'
     
-    LANG = 'en12' 
+    LANG = 'en1.2' 
     dir_name = 'data/char' + '/' + LANG 
     
     f_name_char_train = dir_name + '/en-ud-train1.2.conllu'

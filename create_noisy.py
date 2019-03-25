@@ -6,22 +6,21 @@ import sys
 
 
 def load_dataset(f_name):
-    
     contents = []
     with open(f_name) as f:
         contents = f.readlines()
         
     x_char = []
     y_char = []
-    global CONTENTS
-    CONTENTS = contents
- #   print (contents)
+
     sent_x = []
     sent_y = []
+
     all_sent_x = []
     all_sent_y = []
     all_sent_segs = []
     seg_flags = []
+
     skip = False
     for i, line in enumerate(contents[:-1]):
         if (skip):
@@ -50,11 +49,6 @@ def load_dataset(f_name):
            continue
 
     return all_sent_x, all_sent_y, all_sent_segs, x_char, y_char   
-
-
-
- 
-
 
 
 def create_noisy_dataset_word(all_sent_x_word, all_sent_y_word, delete_spc_prob, insert_spc_prob ):
@@ -120,6 +114,7 @@ def create_noisy_dataset_word(all_sent_x_word, all_sent_y_word, delete_spc_prob,
     print ('Dels/Ins ratio', count_dels / count_ins)
     return corrupt_x, corrupt_y
 
+
 def remove_space(x_data, y_data):
     x_no_spc = [] 
     y_no_spc = [] 
@@ -136,12 +131,12 @@ def remove_space(x_data, y_data):
     return x_no_spc, y_no_spc
 
 
-
 def remove_file(f_name):
     try:
         os.remove(f_name)
     except OSError:
         pass
+
 
 def save_dataset_format_train(f_name, x_data, y_data):         
     remove_file(f_name)    
@@ -163,7 +158,6 @@ def save_dataset_format_test(f_name, x_data):
             f.write('\n') 
 
 
-
 def save_train_dataset_char_corrupt(f_name, x_data, y_data):         
     remove_file(f_name)    
     with open(f_name, 'w') as f:
@@ -172,10 +166,6 @@ def save_train_dataset_char_corrupt(f_name, x_data, y_data):
                 for j, char in enumerate(word):
                         f.write(char + '\t' + label + '\n' )
             f.write('\n')       
-
-
-
-
 
 
 def load_dataset_char_corrupt(f_name):
@@ -201,7 +191,6 @@ def load_dataset_char_corrupt(f_name):
 
 
 if __name__ == '__main__':
-    
     random.seed(0)
     
     f_name_train = 'data/words/en-ud-train1.2.conllu'
@@ -225,7 +214,6 @@ if __name__ == '__main__':
     corrupt_x_test, corrupt_y_test = create_noisy_dataset_word(all_sent_x_word_test, all_sent_y_word_test,
                                                                 delete_spc_prob, insert_spc_prob )
     
-    sys.exit()
     #Used for marmot clean text score
     clean_x_no_spc_train, clean_y_no_spc_train = remove_space(all_sent_x_word_train, all_sent_y_word_train)
     clean_x_no_spc_test, clean_y_no_spc_test = remove_space(all_sent_x_word_test, all_sent_y_word_test)
@@ -236,7 +224,7 @@ if __name__ == '__main__':
     
     
     #Save both clean and corrupt datasets in marmot expected format
-    CORRUPT = True
+    CORRUPT = False
     if CORRUPT == True:
         f_name_word_train_corrupt = 'data/words/corrupt/en-ud-train1.2_cor' + str(delete_spc_prob)+ '-' +str(insert_spc_prob) +  '.conllu'
         f_name_word_test_corrupt = 'data/words/corrupt/en-ud-val1.2_cor' + str(delete_spc_prob)+ '-' +str(insert_spc_prob) +  '.conllu'
@@ -247,7 +235,7 @@ if __name__ == '__main__':
         
         save_dataset_format_test(f_name_test_input_corrupt, corrupt_x_no_spc_test) 
         
-            #These files are for our char model
+        #These files are for our char model
         f_name_char_train_corrupt = 'data/char/corrupt/en-ud-train1.2_cor'  + str(delete_spc_prob)+ '-' +str(insert_spc_prob) +  '.conllu'
         f_name_char_val_corrupt = 'data/char/corrupt/en-ud-val1.2_cor'  + str(delete_spc_prob)+ '-' +str(insert_spc_prob) +  '.conllu'
         f_name_char_test_corrupt = 'data/char/corrupt/en-ud-test1.2_cor'  + str(delete_spc_prob)+ '-' +str(insert_spc_prob) +  '.conllu'
