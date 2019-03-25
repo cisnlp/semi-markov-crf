@@ -5,6 +5,7 @@ from collections import Counter
 import itertools
 from sklearn.metrics import f1_score, accuracy_score
 
+
 def evaluate (net, x_data, y_data, seg_ind, batched_len_list, opt):
     net.eval()
     batch_size_eval = opt.batch_size_eval
@@ -53,13 +54,10 @@ def evaluate (net, x_data, y_data, seg_ind, batched_len_list, opt):
         
 
         hidden = net.init_hidden(bs)
-        
         output_2d, hidden = net( x_batch_s, hidden, sorted_vals )
 
         pack_y = torch.nn.utils.rnn.pack_padded_sequence(y_batch_s, sorted_vals)
         unpacked_y, unpacked_len = torch.nn.utils.rnn.pad_packed_sequence(pack_y)
-        
-        
         
         sorted_vals = torch.LongTensor(sorted_vals)
         if opt.USE_CUDA == True:
@@ -83,12 +81,9 @@ def evaluate (net, x_data, y_data, seg_ind, batched_len_list, opt):
         all_labels_paths.extend( sent_batch_labels )
         all_seg_inds.extend(sent_batch_seg_inds)
         
-        
-        
         print('Evaluating batch', i)
     
     new_segments = []
-    
     for segment in all_segments:
         temp_seg = [(0,segment[0]-1)]
         for j, val in enumerate(segment[1:],1):
@@ -101,7 +96,7 @@ def evaluate (net, x_data, y_data, seg_ind, batched_len_list, opt):
                                                                             all_seg_inds,
                                                                             new_segments)
     
-    #Flatten to calculate f1 score on one run for word level
+    #Flatten to calculate acc score on one run for word level
     all_words_labels_flat = list(itertools.chain.from_iterable(all_words_labels))
     all_words_preds_flat = list(itertools.chain.from_iterable(all_words_preds))
     
@@ -111,12 +106,10 @@ def evaluate (net, x_data, y_data, seg_ind, batched_len_list, opt):
     print ('F1 Tokenization', F1_tok)
     print ('Word level Accuracy: ' , word_acc)
     
- #   print ('Character level F1 score: ' , f1_char)
     return F1_pos_seg
 
 
 def convert_to_word(all_labels_paths, all_char_paths, seg_ind_s, segments_predicted):
-    
     word_2d_labels = []
     word_2d_preds = []
     count_correct_pos_seg = 0
@@ -133,7 +126,6 @@ def convert_to_word(all_labels_paths, all_char_paths, seg_ind_s, segments_predic
                start_ind = j+1
                idx_list.append(word_range)
      
-        
         char_seg = all_char_paths[i]
         segments = [ char_seg[s:(e+1)] for s,e in idx_list]
         word_2d_preds.append( [ Counter(seg).most_common()[0][0] for seg in segments] )
@@ -160,9 +152,4 @@ def convert_to_word(all_labels_paths, all_char_paths, seg_ind_s, segments_predic
     pos_seg_recall = count_correct_pos_seg / total_clean_tokens
     F1_pos_seg = (2 * pos_seg_prec * pos_seg_recall) / (pos_seg_prec + pos_seg_recall)
     
-    
- #   print ('Tokenization recall' , token_recall)
- #   print ('Tokenization precision' , token_prec)
- #   print ('F1 Score Tokenization', F1_tok )
- #   print ('F1 Score POS & Seg', F1_pos_seg)
     return  F1_pos_seg, F1_tok, word_2d_labels,  word_2d_preds 

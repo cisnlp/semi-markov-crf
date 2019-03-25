@@ -1,11 +1,6 @@
 import torch 
 import torch.nn as nn
 import numpy as np
-# =============================================================================
-# import matplotlib
-# matplotlib.use('Agg')
-# import matplotlib.pyplot as plt
-# =============================================================================
 import os
 from torch.autograd import Variable
 import random
@@ -15,6 +10,7 @@ from model_grc import GRC
 from evaluate import evaluate
 import argparse
 import pickle
+
 
 def load_obj(name):
     with open('models/' + name + '.pkl', 'rb') as f:
@@ -27,7 +23,7 @@ def str2bool(v):
         return False
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')    
-    
+   
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_path', type=str, required=False, help='Model path', default='models/net_vi.pt')
 parser.add_argument('--segment_constr', type=str, required=False, help='Segment constructor grConv or SRNN', default='grConv')
@@ -64,10 +60,8 @@ arg_list =  ['--model_path', '/models/net_vi_grc.pt',
 opt = parser.parse_args(arg_list)
 model_path = os.getcwd() + opt.model_path
 
-
 opt.bidirectional = str2bool(opt.bidirectional)
 
-sent_num_test = 999999
 
 HAS_SPACES = True
 if opt.LANG == 'en':
@@ -76,16 +70,10 @@ elif opt.LANG == 'vi':
     f_name_char_test = 'data/char/vi/vi-ud-test.conllu'
 
 all_sent_x_test, all_sent_y_test, all_seg_ind_test, x_char_test, y_char_test =  load_char_dataset(f_name_char_test)
-all_sent_x_test = all_sent_x_test[:sent_num_test]
-all_sent_y_test = all_sent_y_test[:sent_num_test]
-all_seg_ind_test = all_seg_ind_test[:sent_num_test]
-
 
 
 char_to_ind = load_obj('char_vocab_'  + opt.LANG)
 label_to_ind = load_obj('labels_dict_'  + opt.LANG)
-
-
 
 if HAS_SPACES:
     char_enc_size = len(char_to_ind) + 2
@@ -97,12 +85,11 @@ x_test , y_test, seg_ind_test, batched_len_list_test = encode_and_batch(all_sent
                                                                         opt.batch_size_eval, char_enc_size, opt.max_path,
                                                                         HAS_SPACES, train=False)
 
-
 if opt.segment_constr == 'grConv':      
-    net = GRC(char_enc_size, label_to_ind, opt.rnn_type, opt.emb_size, opt.hidden_size, opt.num_layers,
+    net_loaded = GRC(char_enc_size, label_to_ind, opt.rnn_type, opt.emb_size, opt.hidden_size, opt.num_layers,
                       opt.bidirectional, opt.max_path, opt.recurrent_drop, opt.drop)
 elif opt.segment_constr == 'SRNN':
-    net = SRNN(char_enc_size, label_to_ind, opt.rnn_type, opt.emb_size, opt.hidden_size, opt.num_layers,
+    net_loaded = SRNN(char_enc_size, label_to_ind, opt.rnn_type, opt.emb_size, opt.hidden_size, opt.num_layers,
                       opt.bidirectional, opt.max_path, opt.recurrent_drop, opt.drop)
 
 net_loaded.load_state_dict(torch.load(model_path, map_location=lambda storage, loc: storage))

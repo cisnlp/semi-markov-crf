@@ -61,7 +61,7 @@ parser.add_argument('--epoch_break', type=int, required=False, help='Stop traini
 parser.add_argument('--USE_CUDA', type=str, required=True, help='Use GPU flag', default=1 )
 
 
-arg_list =  ['--model_path', '/models/net_vi_srnn.pt',
+arg_list =  ['--model_path', '/models/net_vi_srnn_new.pt',
              '--LANG', 'vi',
              '--segment_constr', 'SRNN',
              '--num_epochs', '200',
@@ -84,17 +84,12 @@ arg_list =  ['--model_path', '/models/net_vi_srnn.pt',
              '--USE_CUDA', 'False'
              ]
  
-
             
 opt = parser.parse_args(arg_list)
 model_path = os.getcwd() + opt.model_path
 
 opt.bidirectional = str2bool(opt.bidirectional)
 opt.USE_CUDA = str2bool(opt.USE_CUDA)
-
-#This num covers all sentences for all languages, configurable for debug purposes
-sent_num= 12543 
-sent_num_val = 2002
 
 
 HAS_SPACES = True
@@ -106,15 +101,8 @@ elif opt.LANG == 'vi':
     f_name_char_val = 'data/char/vi/vi-ud-dev.conllu'
 
 all_sent_x_train, all_sent_y_train, all_seg_ind_train, x_char_train, y_char_train =  load_char_dataset(f_name_char_train)
-all_sent_x_train = all_sent_x_train[:sent_num]
-all_sent_y_train = all_sent_y_train[:sent_num]
-all_seg_ind_train = all_seg_ind_train[:sent_num]
-   
-
+ 
 all_sent_x_val, all_sent_y_val, all_seg_ind_val, x_char_val, y_char_val =  load_char_dataset(f_name_char_val)  
-all_sent_x_val = all_sent_x_val[:sent_num_val]
-all_sent_y_val = all_sent_y_val[:sent_num_val]
-all_seg_ind_val = all_seg_ind_val[:sent_num_val]
 
 
 #Create one hot encoding dictionary
@@ -123,8 +111,6 @@ symbols.remove(' ')
 sorted_symbols = symbols
 labels = sorted(list(set(y_char_train)))
 labels.remove('SPACE')
-
-
 
 
 #Create labels to integers dictionary
@@ -172,8 +158,6 @@ if opt.USE_CUDA == True:
 optimizer = torch.optim.Adam(net.parameters(), lr=opt.lr, weight_decay=0)    
 
 
-#sys.exit()
-
 def repackage_hidden(h):
     """Wraps hidden states in new Variables, to detach them from their history."""
     if type(h) == Variable:
@@ -186,9 +170,7 @@ val_losses = []
 val_acc_history = []
 epoch_train_loss = []
 
-
 time_per_epoch = 0
-
 num_mini_batch = len(x_train)
     
 best_val_score = None
@@ -196,7 +178,6 @@ better_model = False
 epoch_counter = 0
 break_training = 0
 break_flag = False
-
 
 for epoch in range(1, opt.num_epochs + 1):
     net.train()
@@ -244,32 +225,23 @@ for epoch in range(1, opt.num_epochs + 1):
         pack_seg_ind = torch.nn.utils.rnn.pack_padded_sequence(seg_ind_s, sorted_vals)
         unpacked_seg_ind = torch.nn.utils.rnn.pad_packed_sequence(pack_seg_ind)[0]
         
-            
-        #Free the gradient buffer
         optimizer.zero_grad()
         
         hidden = net.init_hidden(bs)
         output_2d, hidden = net( x_batch_s, hidden, sorted_vals )
         
-
         #Convert this to tensor after you used packing, else error 'torch.LongTensor' object is not reversible
         sorted_vals =  torch.LongTensor(sorted_vals)
         if opt.USE_CUDA == True:
             sorted_vals = sorted_vals.cuda()
-        for_time = time.time() 
         forward_var_batch = net._forward_alg(output_2d, sorted_vals)
         gold_score_batch = net.score(output_2d, unpacked_y, unpacked_seg_ind, sorted_vals)
         
-   #     print( forward_var_batch.mean())
-   #     print( gold_score_batch.mean())
-   #     for_stop_time = time.time()
-   #     print( for_stop_time - for_time)
          
         loss = (forward_var_batch-gold_score_batch  ).mean()
         torch.nn.utils.clip_grad_norm(net.parameters(), opt.clip)
 
         epoch_loss += loss.data[0]
-        for_time = time.time()
         loss.backward()
         optimizer.step()
         
@@ -279,10 +251,8 @@ for epoch in range(1, opt.num_epochs + 1):
             elapsed = time.time() - start_time
             print ('Epoch [%d/%d], Batch [%d/%d], Train Loss: %.4f, s/batch %5.2f' 
                    %(epoch, opt.num_epochs, i+1, num_mini_batch, loss.data[0], elapsed/opt.print_every))
-            start_time = time.time()
-          
+            start_time = time.time() 
             
-          
     epoch_loss /= num_mini_batch    
     epoch_train_loss.append( epoch_loss )
     epoch_end = time.time()
@@ -290,15 +260,9 @@ for epoch in range(1, opt.num_epochs + 1):
     
     if  (epoch % opt.epoch_append == 0):
         
-        val_loss = 0              
-        val_crit = nn.CrossEntropyLoss()
         val_score = evaluate(net, x_val, y_val, seg_ind_val, batched_len_list_val, opt)
-
         
         train_losses.append(loss.data[0])
-     #   val_losses.append(val_loss)
-     #   print ('Epoch [%d/%d] Validation Loss: %.4f' %(epoch, num_epochs, val_loss))
-        
         val_acc_history.append( val_score )
         print ('Epoch Loss', epoch_loss)
         
@@ -309,7 +273,7 @@ for epoch in range(1, opt.num_epochs + 1):
                 torch.save(net.state_dict(), f)
             better_model = True
             epoch_counter = 0
-            print ('New Best validation accuracy --------- {:.4f}-'.format(val_score))
+            print ('New Best validation accuracy --------- {:.4f}-\n'.format(val_score))
             break_training = 0
         #If we haven't seen a new validation accuracy after opt.epoch_break epochs, stop training  
         elif break_training == opt.epoch_break:
