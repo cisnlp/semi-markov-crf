@@ -3,7 +3,6 @@ import torch.nn as nn
 import numpy as np
 import os
 from torch.autograd import Variable
-import random
 from data_loader import load_char_dataset
 from data_loader import encode_and_batch
 from model_grc import GRC
@@ -64,8 +63,14 @@ opt.bidirectional = str2bool(opt.bidirectional)
 
 
 HAS_SPACES = True
-if opt.LANG == 'en':
+if opt.LANG == 'en1.2':
     f_name_char_test = 'data/char/en1.2/en-ud-test1.2.conllu'
+elif opt.LANG == 'en':
+    f_name_char_test = 'data/char/en/en-ud-test.conllu'
+elif opt.LANG == 'ja':
+    f_name_char_test = 'data/char/ja/ja-ud-test.conllu'
+elif opt.LANG == 'zh':
+    f_name_char_test = 'data/char/zh/zh-ud-test.conllu'    
 elif opt.LANG == 'vi':
     f_name_char_test = 'data/char/vi/vi-ud-test.conllu'
 

@@ -61,9 +61,9 @@ parser.add_argument('--epoch_break', type=int, required=False, help='Stop traini
 parser.add_argument('--USE_CUDA', type=str, required=True, help='Use GPU flag', default=1 )
 
 
-arg_list =  ['--model_path', '/models/net_vi_srnn_new.pt',
+arg_list =  ['--model_path', '/models/net_vi_grc.pt',
              '--LANG', 'vi',
-             '--segment_constr', 'SRNN',
+             '--segment_constr', 'grConv',
              '--num_epochs', '200',
              '--max_path', '23',
              '--batch_size_train', '20',
@@ -96,6 +96,15 @@ HAS_SPACES = True
 if opt.LANG == 'en1.2':
     f_name_char_train = 'data/char/en1.2/en-ud-train1.2.conllu'
     f_name_char_val = 'data/char/en1.2/en-ud-dev1.2.conllu'
+elif opt.LANG == 'en':
+    f_name_char_train = 'data/char/en/en-ud-train.conllu'
+    f_name_char_val = 'data/char/en/en-ud-dev.conllu'
+elif opt.LANG == 'ja':
+    f_name_char_train = 'data/char/ja/ja-ud-train.conllu'
+    f_name_char_val = 'data/char/ja/ja-ud-dev.conllu'
+elif opt.LANG == 'zh':
+    f_name_char_train = 'data/char/zh/zh-ud-train.conllu'
+    f_name_char_val = 'data/char/zh/zh-ud-dev.conllu'
 elif opt.LANG == 'vi':
     f_name_char_train = 'data/char/vi/vi-ud-train.conllu'
     f_name_char_val = 'data/char/vi/vi-ud-dev.conllu'
