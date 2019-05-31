@@ -33,14 +33,13 @@ To train the model with the default parameters now run `python3 train.py`
 
 ## Evaluate
 
-After training a model go to predict.py and select the model\_path and the LANG you want to evaluate
+After training a model go to `predict.py` and select the model\_path and the LANG you want to evaluate in the args_list
 
 Current repo has an untrained model on Vietnamese
 
 ## Marmot
 
-For MarMot evaluation (Table 1, 4) run scripts evaluate_marmot_joint.py and evaluate_marmot_relaxed.py
-
+For MarMot evaluation (Table 1, 4) run scripts `evaluate_marmot_joint.py` and `evaluate_marmot_relaxed.py`
 
 The relaxed evaluation constructs a label for each gold token by taking the label outputs of the UDPipe + Marmot.
  
@@ -48,7 +47,7 @@ Four possible tokenization output cases are detected.
 
 1. **A correct token was detected: e.g Wonderful.**
 
-   The label selected in this case is the predicted
+   The label selected in this case is the predicted.
 
 2. **A corrupted space tokenization wasn't merged. e.g Wonderful -> Wo-nd-er-ful.**
 
@@ -62,8 +61,8 @@ Four possible tokenization output cases are detected.
    In this case MarMot outputs only 1 label for all three seperate tokens.
    In this case we output the golden label for each of the individual gold token, only if that token has its gold label equal to the single predicted label. Otherwise we output a randomly wrong label for that token
 
-   e.g **Don'tgo** GOLD -> [(Do) VERB ,(n't) ADV, (go)VERB]   
-       predicted -> [ADV]  
+   e.g **Don'tgo** GOLD -> [(Do) VERB ,(n't) ADV, (go) VERB]   
+       prediction -> [ADV]  
        constructed output-> [WRONG_LABEL, ADV, WRONG_LABEL]
 
 
