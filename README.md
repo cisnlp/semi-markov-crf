@@ -42,8 +42,8 @@ Current repo has an untrained model on Vietnamese
 For MarMot evaluation (Table 1, 4) run scripts evaluate_marmot_joint.py and evaluate_marmot_relaxed.py
 
 
-The relaxed evaluation constructs a label for each gold token by taking the label outputs of the UDPipe + Marmot
-. 
+The relaxed evaluation constructs a label for each gold token by taking the label outputs of the UDPipe + Marmot.
+ 
 Four possible tokenization output cases are detected.
 
 1. **A correct token was detected: e.g Wonderful.**
@@ -60,10 +60,10 @@ Four possible tokenization output cases are detected.
 3. **A merge of one or more tokens occured. e.g Don'tgo**
 
    In this case MarMot outputs only 1 label for all three seperate tokens.
-   In this case we output the golden label for each of the individual gold token, only if that token has a gold label as the single predicted label, otherwise we output a randomly wrong label for that token
+   In this case we output the golden label for each of the individual gold token, only if that token has its gold label equal to the single predicted label. Otherwise we output a randomly wrong label for that token
 
    e.g **Don'tgo** GOLD -> [(Do) VERB ,(n't) ADV, (go)VERB]   
-       predicted -> [ADV],
+       predicted -> [ADV]  
        constructed output-> [WRONG_LABEL, ADV, WRONG_LABEL]
 
 
