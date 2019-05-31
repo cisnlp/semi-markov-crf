@@ -16,9 +16,9 @@ sklearn
 
 Go to train.py from arg\_list select the model\_path and the LANG (language) you want to select. The options are:
 
-'en' for English  UD 1.2 
+'en1.2' for English  UD 1.2 
 
-'en20' for English  UD 1.2 
+'en' for English  UD 2.0
 
 'ja' for Japanese UD 2.0
 
