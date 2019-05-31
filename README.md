@@ -1,34 +1,43 @@
 # semi-markov-crf
 
-Code for paper *Neural Semi-Markov Conditional Random Fields for Robust Character-Based Part-of-Speech Tagging* 
+Code for paper **Neural Semi-Markov Conditional Random Fields for Robust Character-Based Part-of-Speech Tagging**
 
 ## Requirements
 python 3.6
+
 pytorch 0.2.0
+
 numpy
+
 sklearn
 
 
-##Train
+## Train
 
 Go to train.py from arg\_list select the model\_path and the LANG (language) you want to select. The options are:
+
 'en' for English  UD 1.2 
+
 'en20' for English  UD 1.2 
+
 'ja' for Japanese UD 2.0
+
 'zh' for Chinese UD 2.0
+
 'vi' for Vietnamese UD 2.0
+
 
 You can also select the segment constructor (grConv or SRNN, default grConv)
 
 To train the model with the default parameters now run `python3 train.py`
 
-##Evaluate
+## Evaluate
 
 After training a model go to predict.py and select the model\_path and the LANG you want to evaluate
 
 Current repo has an untrained model on Vietnamese
 
-##Marmot
+## Marmot
 
 For MarMot evaluation (Table 1, 4) run scripts evaluate_marmot_joint.py and evaluate_marmot_relaxed.py
 
