@@ -48,19 +48,19 @@ Four possible tokenization output cases are detected.
 
 1. A correct token was detected: e.g Wonderful.
 
- ...The label selected in this case is the predicted
+   The label selected in this case is the predicted
 
 2. A corrupted space tokenization wasn't merged. e.g Wonderful -> Wo-nd-er-ful.
 
-   The label selected in this case is the golden one if any of the sub-tokens had a correct label.
-   For example if any of the (Wo, nd, er, ful) tokens has an ADJ label (Wonderful is adjective), the golden label is selected as output.
+   The label selected in this case is the golden one if any of the sub-tokens had a correct label.  
+   For example if any of the (Wo, nd, er, ful) tokens has an ADJ label (Wonderful is adjective), the golden label is selected as output.  
    If none has the golden one, a random wrong label is selected instead.
 
 
 3. A merge of one or more tokens occured. e.g Don'tgo
 
-...In this case MarMot outputs only 1 label for all three seperate tokens.
-...In this case we output the golden label for each of the individual gold token, only if that token has a gold label as the single predicted label, otherwise we output a randomly wrong label for that token
+   In this case MarMot outputs only 1 label for all three seperate tokens.
+   In this case we output the golden label for each of the individual gold token, only if that token has a gold label as the single predicted label, otherwise we output a randomly wrong label for that token
 
 ...e.g Don'tgo GOLD -> [(Do) VERB ,(n't) ADV, (go)VERB] , predicted -> [ADV], constructed output-> [WRONG_LABEL, ADV, WRONG_LABEL]
 
