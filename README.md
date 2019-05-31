@@ -52,9 +52,9 @@ Four possible tokenization output cases are detected.
 
 2. A corrupted space tokenization wasn't merged. e.g Wonderful -> Wo-nd-er-ful.
 
-⋅⋅⋅The label selected in this case is the golden one if any of the sub-tokens had a correct label.
-⋅⋅⋅For example if any of the (Wo, nd, er, ful) tokens has an ADJ label (Wonderful is adjective), the golden label is selected as output.
-⋅⋅⋅If none has the golden one, a random wrong label is selected instead.
+   The label selected in this case is the golden one if any of the sub-tokens had a correct label.
+   For example if any of the (Wo, nd, er, ful) tokens has an ADJ label (Wonderful is adjective), the golden label is selected as output.
+   If none has the golden one, a random wrong label is selected instead.
 
 
 3. A merge of one or more tokens occured. e.g Don'tgo
